@@ -1,16 +1,115 @@
 
+import { Box, Layers, Menu, Moon, Settings, Share2 } from 'lucide-react'
 import { Button } from './components/ui/button'
-
+import { useAppStore } from './store/useAppStore'
+import { SheetContent, SheetDescription, SheetTitle, SheetTrigger } from './components/ui/sheet'
+import { Sheet } from './components/ui/sheet'
 const App = () => {
+  const { isMobilePanelOpen, setMobilePanelOpen } = useAppStore()
+
+
+  const RightPanel = () => {
+    return (
+
+      <div className="flex h-full w-80 flex-col bg-zinc-950 p-4 text-zinc-400">
+        Right Panel Inspector Area
+      </div>
+    )
+  }
+
   return (
     <div
-      className="flex items-center justify-center h-screen text-4xl font-bold"
-    >
+      className="flex h-screen w-full flex-col bg-zinc-950 text-zinc-100">
+      {/* Top Navigation */}
+      <header
+        className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-800 px-4"
 
-      <h1>Add Graph Builder</h1>
-      <Button
-        className="ml-4"
-      >Click Me</Button>
+      >
+        <div className="flex items-center gap-2 font-semibold text-lg">
+          <Layers
+            className="h-5 w-5 text-indigo-500"
+          />
+          <span
+          >App Graph Builder</span>
+        </div>
+        <div
+          className="flex items-center gap-2"
+        >
+          <Button variant="outline" size="sm" className="hidden border-zinc-700 bg-zinc-900 md:flex">
+            Fit View
+          </Button>
+          <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-zinc-900">
+            <Share2 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost" size="icon"
+            className="text-zinc-400 hover:text-zinc-900 "
+          >
+            <Moon className="h-4 w-4" />
+          </Button>
+
+          {/* Mobile menu toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobilePanelOpen(!isMobilePanelOpen)}
+          >
+            <Menu
+              className="h-5 w-5 "
+            />
+          </Button>
+        </div>
+
+
+      </header>
+      {/* Main  menu  toggle */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left rail */}
+        <aside
+          className="hidden w-14 flex-col items-center border-r border-zinc-800 py-4 md:flex"
+        >
+          <Button
+            variant="ghost" size="icon" className="mb-4 bg-zinc-800 text-zinc-100 "
+          >
+            <Box className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost" size="icon" className="mb-4 text-zinc-400 hover:text-zinc-100"
+          >
+            <Settings
+              className="h-5 w-5"
+            />
+          </Button>
+        </aside>
+        {/* Center canvas Area (React Flow ) */}
+        <main
+          className="relative flex flex-1 border-r border-zinc-800 bg-zinc-900/50"
+
+
+        >
+          <div
+            className='absolute inset-0 flex items-center justify-center text-zinc-500'
+          >
+            React Canvas Area
+          </div>
+
+        </main>
+        {/* Desktop Right Panel */}
+        <div className='hidden md:block'>
+          <RightPanel />
+
+        </div>
+      </div>
+      {/* Mobile Drawer Right Panel */}
+      <Sheet open={isMobilePanelOpen} onOpenChange={setMobilePanelOpen}>
+        <SheetContent side="right" className="w-80 border-l border-zinc-800 bg-zinc-950 p-0 sm:max-w-xs">
+          <SheetTitle className="sr-only">App Graph Inspector</SheetTitle>
+          <SheetDescription className="sr-only">Configure nodes and view app graphs.</SheetDescription>
+          <RightPanel />
+        </SheetContent>
+      </Sheet>
+
     </div>
   )
 }
