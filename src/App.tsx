@@ -4,19 +4,13 @@ import { Button } from './components/ui/button'
 import { useAppStore } from './store/useAppStore'
 import { SheetContent, SheetDescription, SheetTitle, SheetTrigger } from './components/ui/sheet'
 import { Sheet } from './components/ui/sheet'
+import RightPanel from './components/RightPanel'
+
 const App = () => {
   const { isMobilePanelOpen, setMobilePanelOpen } = useAppStore()
 
 
-  const RightPanel = () => {
-    return (
-
-      <div className="flex h-full w-80 flex-col bg-zinc-950 p-4 text-zinc-400">
-        Right Panel Inspector Area
-      </div>
-    )
-  }
-
+  
   return (
     <div
       className="flex h-screen w-full flex-col bg-zinc-950 text-zinc-100">
