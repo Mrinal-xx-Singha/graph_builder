@@ -13,7 +13,7 @@ export const useApps = ()=>{
 }
 
 
-export const useAppGraph =(appId:string)=>{
+export const useAppGraph =(appId:string | null)=>{
     return useQuery({
         queryKey:['graph',appId],
         queryFn:async() =>{

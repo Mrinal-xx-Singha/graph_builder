@@ -1,9 +1,10 @@
+import { useReactFlow } from 'reactflow'
 import { useApps } from '@/hooks/useAppData'
 
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { Slider } from './ui/slider'
 import { Input } from './ui/input'
@@ -11,11 +12,48 @@ import { Input } from './ui/input'
 const RightPanel = () => {
     // global state 
     const { selectedAppId, setSelectedAppId, selectedNodeId, activeInspectorTab, setActiveInspectorTab } = useAppStore()
+
+
     // fetch mock API data
     const { data: apps, isLoading, isError } = useApps()
 
     // local state for slider 
     const [sliderValue, setSliderValue] = useState(50)
+    const { setNodes, getNode } = useReactFlow()
+    useEffect(() => {
+        if (selectedNodeId) {
+            const node = getNode(selectedNodeId)
+            if (node && node.data.memory) {
+                // Our mock data uses 0.05GB lets extract just the number for the slider
+                const memoryNumber = parseFloat(node.data.memory)
+                // Convert to 0-100 scale for the slider 
+                setSliderValue(memoryNumber * 100)
+            }
+        }
+
+    }, [selectedNodeId, getNode])
+
+    // Creating a helper function to fire when the user move the slider
+    const handleSliderChange = (newVal: number) => {
+        setSliderValue(newVal) // Update the local slider UI
+        // Tell ReactFlow to update the specific node on the canvas!
+        setNodes((nds) =>
+            nds.map((node) => {
+                if (node.id === selectedNodeId) {
+                    // It's critical to return a brand NEW object here, or React won't re-render it
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            memory: `${(newVal / 100).toFixed(2)} GB`, // format it nicely
+                        },
+                    }
+                }
+                return node
+            })
+        )
+    }
+
 
     return (
         <div className='flex h-full w-full flex-col overflow-y-auto bg-zinc-950 text-zinc-100'>
@@ -66,8 +104,8 @@ const RightPanel = () => {
                             <h2 className='text-lg font-semibold'>
                                 Service Node: {selectedNodeId}
                             </h2>
-                            <Tabs >
-                                <TabsList>
+                            <Tabs value={activeInspectorTab} onValueChange={setActiveInspectorTab} className="w-full">
+                                <TabsList className="grid w-full grid-cols-2 bg-zinc-900">
                                     <TabsTrigger value='config'>Config</TabsTrigger>
                                     <TabsTrigger value='runtime'>Runtime</TabsTrigger>
                                 </TabsList>
@@ -80,7 +118,7 @@ const RightPanel = () => {
                                             {/* The synced slider and input */}
                                             <Slider
                                                 value={[sliderValue]}
-                                                onValueChange={(vals) => setSliderValue(vals[0])}
+                                                onValueChange={(vals) => handleSliderChange(vals[0])}
                                                 max={100}
                                                 step={1}
                                                 className="flex-1"
@@ -89,7 +127,7 @@ const RightPanel = () => {
                                             <Input
                                                 type='number'
                                                 value={sliderValue}
-                                                onChange={(e) => setSliderValue(Number(e.target.value))}
+                                                onChange={(e) => handleSliderChange(Number(e.target.value))}
                                                 className='w-16 border-zinc-700 bg-zinc-900'
                                             />
                                         </div>

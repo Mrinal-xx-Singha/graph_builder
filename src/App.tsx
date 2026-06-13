@@ -2,15 +2,14 @@
 import { Box, Layers, Menu, Moon, Settings, Share2 } from 'lucide-react'
 import { Button } from './components/ui/button'
 import { useAppStore } from './store/useAppStore'
-import { SheetContent, SheetDescription, SheetTitle, SheetTrigger } from './components/ui/sheet'
+import { SheetContent, SheetDescription, SheetTitle } from './components/ui/sheet'
 import { Sheet } from './components/ui/sheet'
 import RightPanel from './components/RightPanel'
+import GraphCanvas from './components/GraphCanvas'
 
 const App = () => {
   const { isMobilePanelOpen, setMobilePanelOpen } = useAppStore()
 
-
-  
   return (
     <div
       className="flex h-screen w-full flex-col bg-zinc-950 text-zinc-100">
@@ -19,7 +18,7 @@ const App = () => {
         className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-800 px-4"
 
       >
-        <div className="flex items-center gap-2 font-semibold text-lg">
+        <div className="flex items-center gap-2 font-semibold text-sm md:text-lg">
           <Layers
             className="h-5 w-5 text-indigo-500"
           />
@@ -78,15 +77,8 @@ const App = () => {
         </aside>
         {/* Center canvas Area (React Flow ) */}
         <main
-          className="relative flex flex-1 border-r border-zinc-800 bg-zinc-900/50"
-
-
-        >
-          <div
-            className='absolute inset-0 flex items-center justify-center text-zinc-500'
-          >
-            React Canvas Area
-          </div>
+          className="relative flex flex-1 border-r border-zinc-800 bg-zinc-900/50">
+          <GraphCanvas />
 
         </main>
         {/* Desktop Right Panel */}
