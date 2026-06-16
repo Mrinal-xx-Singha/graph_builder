@@ -6,6 +6,7 @@ import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useN
 import { useAppStore } from "@/store/useAppStore";
 import { useAppGraph } from "@/hooks/useAppData";
 import ServiceNode from './ServiceNode';
+import { Spinner } from "./ui/spinner";
 
 const nodeTypes = {
     service: ServiceNode
@@ -55,8 +56,8 @@ const GraphCanvas = () => {
     }
 
     if (isLoading) {
-        return <div className="flex h-full items-center justify-center text-zinc-500 text-center w-full">
-            Loading graph....
+        return <div className="flex h-full items-center justify-center text-zinc-500  w-full">
+            <Spinner className="size-6"/>
         </div>
     }
     return (

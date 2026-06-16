@@ -4,10 +4,11 @@ import { useApps } from '@/hooks/useAppData'
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
-import  { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { Slider } from './ui/slider'
 import { Input } from './ui/input'
+import { Spinner } from './ui/spinner'
 
 const RightPanel = () => {
     // global state 
@@ -19,7 +20,7 @@ const RightPanel = () => {
 
     // local state for slider 
     const [sliderValue, setSliderValue] = useState(50)
-    const [nodeName,setNodeName]=useState("")
+    const [nodeName, setNodeName] = useState("")
     const { setNodes, getNode } = useReactFlow()
 
 
@@ -32,7 +33,7 @@ const RightPanel = () => {
                 // Convert to 0-100 scale for the slider 
                 setSliderValue(memoryNumber * 100)
             }
-            if(node?.data.name){
+            if (node?.data.name) {
                 setNodeName(node.data.name)
             }
         }
@@ -58,6 +59,16 @@ const RightPanel = () => {
                 return node
             })
         )
+    }
+
+    if (isLoading) {
+        return <div className='flex items-center justify-center gap-4 w-60 '>
+            <div className="flex justify-center items-center">
+
+                <Spinner className='size-6' />
+            </div>
+        </div>
+
     }
 
 
@@ -107,12 +118,12 @@ const RightPanel = () => {
                         <div
                             className='flex flex-col gap-4'
                         >
-                          
+
                             <div className="space-y-1">
                                 <label className="text-xs text-zinc-400">Node Name</label>
                                 <Input
                                     value={nodeName}
-                                    
+
                                     onChange={(e) => {
                                         setNodeName(e.target.value)
                                         // update reactFlow canvas in the background
@@ -150,6 +161,7 @@ const RightPanel = () => {
                                             />
                                             <Input
                                                 type='number'
+                                                disabled={sliderValue === Number('100')}
                                                 value={sliderValue}
                                                 onChange={(e) => handleSliderChange(Number(e.target.value))}
                                                 className='w-16 border-zinc-700 bg-zinc-900'

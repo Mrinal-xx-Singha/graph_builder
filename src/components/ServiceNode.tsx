@@ -1,13 +1,57 @@
 import { Handle, Position, type NodeProps } from 'reactflow'
 import { Database, Settings, Cloud } from 'lucide-react'
 import { Badge } from './ui/badge'
+import { useState, useEffect } from 'react'
+import { useReactFlow } from 'reactflow'
+import { Slider } from "./ui/slider"
 
-export default function ServiceNode({ data }: NodeProps) {
+export default function ServiceNode({ id, data }: NodeProps) {
     // Determine badge color based on mock status
-    const isError = data.status === 'Error'
-    const badgeColor = isError
-        ? "bg-red-950 text-red-500 border-red-900"
-        : "bg-emerald-950 text-emerald-500 border-emerald-900"
+    const { setNodes } = useReactFlow()
+
+    const getBadgeColor = (status: string) => {
+        switch (status?.toLowerCase()) {
+            case 'degraded':
+                return "bg-yellow-950 text-yellow-500 border border-yellow-900"
+            case "down":
+                return "bg-red-950 text-red-500 border-red-900"
+            case 'healthy':
+            case "success":
+                return "bg-emerald-950 text-emerald-500 border-emerald-900"
+
+        }
+    }
+
+
+    const badgeColor = getBadgeColor(data.status)
+
+    const memoryNumber = parseFloat(data.memory) || 0
+    const sliderPercentage = Math.min(Math.max(memoryNumber * 100, 0), 100)
+// local state to make the slider drag smoothly
+    const [sliderVal, setSliderVal] = useState([sliderPercentage])
+
+    useEffect(() => {
+        setSliderVal([sliderPercentage])
+    }, [sliderPercentage])
+
+    // Function to handle dragging the slider on the node itself
+    const handleSliderChange = (vals: number[]) => {
+
+        const newVal = vals[0]
+        const clampedVal = Math.min(Math.max(newVal,0),100)
+        setSliderVal([clampedVal])
+// Update the global ReactFlow state so the right Panel updates too!
+        setNodes((nds) => nds.map((n) => {
+            if (n.id === id) {
+                return {
+                    ...n, data: {
+                        ...n.data, memory: `${(clampedVal / 100).toFixed(2)} GB`
+                    }
+                }
+            }
+            return n
+        }))
+    }
 
     return (
         <div className="w-[320px] rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-zinc-100 shadow-2xl">
@@ -54,11 +98,16 @@ export default function ServiceNode({ data }: NodeProps) {
 
             {/* Slider Visual */}
             <div className="mb-6 flex items-center gap-3">
-                <div className="relative flex-1 h-1.5 rounded-full bg-linear-to-r from-blue-500 via-emerald-500 to-red-500">
-                    <div className="absolute left-[20%] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border border-zinc-200 bg-white shadow-md"></div>
-                </div>
-                <div className="rounded border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs">
-                    0.02
+                <Slider
+                    value={sliderVal}
+                    onValueChange={handleSliderChange}
+                    max={100}
+                    step={1}
+                    className="nodrag flex-1"
+                />
+
+                <div className="w-16 rounded border border-zinc-800 bg-zinc-900 px-2 py-1 text-center text-xs">
+                    {data.memory || "0.00 GB"}
                 </div>
             </div>
 
