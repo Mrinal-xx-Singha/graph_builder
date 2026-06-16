@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { useEffect, useCallback } from "react";
 import 'reactflow/dist/style.css'
 import ReactFlow, { Background, BackgroundVariant, Controls, useEdgesState, useNodesState, type OnSelectionChangeParams } from "reactflow";
@@ -55,7 +55,7 @@ const GraphCanvas = () => {
     }
 
     if (isLoading) {
-        return <div className="flex h-full items-center justify-center text-zinc-500">
+        return <div className="flex h-full items-center justify-center text-zinc-500 text-center w-full">
             Loading graph....
         </div>
     }

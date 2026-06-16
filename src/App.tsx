@@ -6,9 +6,11 @@ import { SheetContent, SheetDescription, SheetTitle } from './components/ui/shee
 import { Sheet } from './components/ui/sheet'
 import RightPanel from './components/RightPanel'
 import GraphCanvas from './components/GraphCanvas'
+import { useReactFlow } from 'reactflow'
 
 const App = () => {
   const { isMobilePanelOpen, setMobilePanelOpen } = useAppStore()
+  const { fitView } = useReactFlow()
 
   return (
     <div
@@ -22,13 +24,14 @@ const App = () => {
           <Layers
             className="h-5 w-5 text-indigo-500"
           />
-          <span
-          >App Graph Builder</span>
+          <span>App Graph Builder</span>
         </div>
         <div
           className="flex items-center gap-2"
         >
-          <Button variant="outline" size="sm" className="hidden border-zinc-700 bg-zinc-900 md:flex">
+          <Button variant="outline" size="sm" className="hidden border-zinc-700 bg-zinc-900 md:flex"
+            onClick={() => fitView({ duration: 800, padding: 0.2 })}
+          >
             Fit View
           </Button>
           <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-zinc-900">

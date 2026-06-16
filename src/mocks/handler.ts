@@ -19,7 +19,7 @@ export const handlers = [
         ])
     }),
     // get graph data for a specific app 
-    http.get('/api/apps/:appId/graph', async ({ params }) => {
+    http.get('/api/apps/:appId/graph', async () => {
         await delay(1000)
 
         // return a default graph with 3 nodes and 2 edges 

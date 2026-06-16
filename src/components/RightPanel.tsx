@@ -4,7 +4,7 @@ import { useApps } from '@/hooks/useAppData'
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { Slider } from './ui/slider'
 import { Input } from './ui/input'
@@ -19,7 +19,10 @@ const RightPanel = () => {
 
     // local state for slider 
     const [sliderValue, setSliderValue] = useState(50)
+    const [nodeName,setNodeName]=useState("")
     const { setNodes, getNode } = useReactFlow()
+
+
     useEffect(() => {
         if (selectedNodeId) {
             const node = getNode(selectedNodeId)
@@ -28,6 +31,9 @@ const RightPanel = () => {
                 const memoryNumber = parseFloat(node.data.memory)
                 // Convert to 0-100 scale for the slider 
                 setSliderValue(memoryNumber * 100)
+            }
+            if(node?.data.name){
+                setNodeName(node.data.name)
             }
         }
 
@@ -101,9 +107,27 @@ const RightPanel = () => {
                         <div
                             className='flex flex-col gap-4'
                         >
-                            <h2 className='text-lg font-semibold'>
-                                Service Node: {selectedNodeId}
-                            </h2>
+                          
+                            <div className="space-y-1">
+                                <label className="text-xs text-zinc-400">Node Name</label>
+                                <Input
+                                    value={nodeName}
+                                    
+                                    onChange={(e) => {
+                                        setNodeName(e.target.value)
+                                        // update reactFlow canvas in the background
+                                        setNodes((nds) =>
+                                            nds.map((n) => {
+                                                if (n.id === selectedNodeId) {
+                                                    return { ...n, data: { ...n.data, name: e.target.value } }
+                                                }
+                                                return n
+                                            })
+                                        )
+                                    }}
+                                    className="border-zinc-700 bg-zinc-900 font-semibold text-lg"
+                                />
+                            </div>
                             <Tabs value={activeInspectorTab} onValueChange={setActiveInspectorTab} className="w-full">
                                 <TabsList className="grid w-full grid-cols-2 bg-zinc-900">
                                     <TabsTrigger value='config'>Config</TabsTrigger>

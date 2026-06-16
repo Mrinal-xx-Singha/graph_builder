@@ -3,10 +3,6 @@ import { Database, Settings, Cloud } from 'lucide-react'
 import { Badge } from './ui/badge'
 
 export default function ServiceNode({ data }: NodeProps) {
-
-    console.log(data);
-    
-
     // Determine badge color based on mock status
     const isError = data.status === 'Error'
     const badgeColor = isError
