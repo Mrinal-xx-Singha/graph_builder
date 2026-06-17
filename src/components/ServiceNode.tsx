@@ -4,10 +4,13 @@ import { Badge } from './ui/badge'
 import { useState, useEffect } from 'react'
 import { useReactFlow } from 'reactflow'
 import { Slider } from "./ui/slider"
+import { useUpdateNodeData } from '@/hooks/useUpdateNodeData'
 
 export default function ServiceNode({ id, data }: NodeProps) {
     // Determine badge color based on mock status
     const { setNodes } = useReactFlow()
+
+    const { updateNodeMemory } = useUpdateNodeData()
 
     const getBadgeColor = (status: string) => {
         switch (status?.toLowerCase()) {
@@ -27,7 +30,7 @@ export default function ServiceNode({ id, data }: NodeProps) {
 
     const memoryNumber = parseFloat(data.memory) || 0
     const sliderPercentage = Math.min(Math.max(memoryNumber * 100, 0), 100)
-// local state to make the slider drag smoothly
+    // local state to make the slider drag smoothly
     const [sliderVal, setSliderVal] = useState([sliderPercentage])
 
     useEffect(() => {
@@ -38,19 +41,10 @@ export default function ServiceNode({ id, data }: NodeProps) {
     const handleSliderChange = (vals: number[]) => {
 
         const newVal = vals[0]
-        const clampedVal = Math.min(Math.max(newVal,0),100)
+        const clampedVal = Math.min(Math.max(newVal, 0), 100)
         setSliderVal([clampedVal])
-// Update the global ReactFlow state so the right Panel updates too!
-        setNodes((nds) => nds.map((n) => {
-            if (n.id === id) {
-                return {
-                    ...n, data: {
-                        ...n.data, memory: `${(clampedVal / 100).toFixed(2)} GB`
-                    }
-                }
-            }
-            return n
-        }))
+        // Update the global ReactFlow state so the right Panel updates too!
+        updateNodeMemory(id, newVal)
     }
 
     return (

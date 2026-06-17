@@ -1,5 +1,6 @@
 import { useReactFlow } from 'reactflow'
 import { useApps } from '@/hooks/useAppData'
+import { useUpdateNodeData } from '@/hooks/useUpdateNodeData'
 
 import { useAppStore } from '@/store/useAppStore'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
@@ -13,6 +14,8 @@ import { Spinner } from './ui/spinner'
 const RightPanel = () => {
     // global state 
     const { selectedAppId, setSelectedAppId, selectedNodeId, activeInspectorTab, setActiveInspectorTab } = useAppStore()
+
+    const {updateNodeMemory} = useUpdateNodeData()
 
 
     // fetch mock API data
@@ -42,23 +45,14 @@ const RightPanel = () => {
 
     // Creating a helper function to fire when the user move the slider
     const handleSliderChange = (newVal: number) => {
+
+        const clampedVal = Math.min(Math.max(newVal,0),100)
+
         setSliderValue(newVal) // Update the local slider UI
         // Tell ReactFlow to update the specific node on the canvas!
-        setNodes((nds) =>
-            nds.map((node) => {
-                if (node.id === selectedNodeId) {
-                    // It's critical to return a brand NEW object here, or React won't re-render it
-                    return {
-                        ...node,
-                        data: {
-                            ...node.data,
-                            memory: `${(newVal / 100).toFixed(2)} GB`, // format it nicely
-                        },
-                    }
-                }
-                return node
-            })
-        )
+        if(selectedNodeId){
+            updateNodeMemory(selectedNodeId,clampedVal)
+        }
     }
 
     if (isLoading) {
