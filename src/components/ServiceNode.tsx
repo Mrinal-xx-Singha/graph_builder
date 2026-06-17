@@ -2,13 +2,13 @@ import { Handle, Position, type NodeProps } from 'reactflow'
 import { Database, Settings, Cloud } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { useState, useEffect } from 'react'
-import { useReactFlow } from 'reactflow'
+
 import { Slider } from "./ui/slider"
 import { useUpdateNodeData } from '@/hooks/useUpdateNodeData'
 
 export default function ServiceNode({ id, data }: NodeProps) {
     // Determine badge color based on mock status
-    const { setNodes } = useReactFlow()
+  
 
     const { updateNodeMemory } = useUpdateNodeData()
 
